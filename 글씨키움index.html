@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>First Step In</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #11111a;
+      font-family: 'Pretendard', sans-serif;
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    h1 {
+      font-size: 3.125rem;
+      margin-bottom: 20px;
+    }
+
+    .btn, .test-link {
+      background-color: #8d7bfa;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .option {
+      background-color: #11111a;
+      color: white;
+      padding: 12px 24px;
+      border: 1px solid #8d7bfa;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover, .test-link:hover, .option:hover {
+      background-color: #6e5edb;
+    }
+
+    .question-box {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .test-selection {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #888;
+      position: absolute;
+      bottom: 20px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p style="color: #a98dff; font-weight: 500; margin-bottom: 10px;">나를 알기 위한 첫걸음 - 간단한 자가 정신건강 검사</p>
+    <h1 style="font-size: 3.025rem;">First step in</h1>
+    <p>내 마음이 궁금할 때, 조심스레 마음을 들여다보는 시간.<br>내 안의 나를 찾아가는 여행을 떠날 준비가 되셨나요?</p>
+
+    <button class="btn" id="start-button" onclick="showTestSelection()">검사하러 가기 →</button>
+
+    <div id="test-selection" class="test-selection">
+      <button class="btn" onclick="startTest()">우울증 검사 →</button>
+      <button class="btn" onclick="alert('준비 중입니다')">ADHD 검사 →</button>
+      <button class="btn" onclick="alert('준비 중입니다')">불안장애 검사 →</button>
+    </div>
+
+    <div id="quiz" class="question-box">
+      <div id="question-number"></div>
+      <div id="question-text" class="question"></div>
+      <div id="answer-buttons">
+        <button class="option" onclick="selectAnswer(0)">전혀 아니다</button>
+        <button class="option" onclick="selectAnswer(1)">아니다</button>
+        <button class="option" onclick="selectAnswer(2)">그렇다</button>
+        <button class="option" onclick="selectAnswer(3)">매우 그렇다</button>
+      </div>
+      <button class="btn" id="back-button" onclick="goBack()" style="display: none;">← 이전 문항</button>
+    </div>
+
+    <div id="result" class="question-box">
+      <h2 id="score-text" style="font-size: 3.125rem;"></h2>
+      <h3 id="score-level" style="font-size: 3.125rem; margin-top: 10px;"></h3>
+      <p id="score-message" style="white-space: pre-line; margin-top: 20px;"></p>
+    </div>
+
+    <p class="footer" style="white-space: nowrap;">이 사이트는 정신건강에 대한 자가 이해를 돕기 위한 목적으로 제작되었으며, 의학적 진단을 대신하지 않습니다.</p>
+  </div>
+
+  <script>
+    const questions = [
+      "최근 2주간, 기분이 가라앉거나 우울하거나 희망이 없다고 느낀 적이 있나요?",
+      "예전보다 즐거움이나 흥미를 느끼는 일이 줄어들었나요?",
+      "잠들기 어렵거나 너무 많이 자는 날이 많았나요?",
+      "피곤하거나 기운이 없다고 느낀 적이 많나요?",
+      "식욕이 떨어지거나 과식하게 된 적이 있나요?",
+      "자신이 쓸모없다고 느끼거나, 자책한 적이 있나요?",
+      "집중하기 어렵거나, 결정을 내리기 힘들었나요?",
+      "움직임이 느려졌거나, 반대로 안절부절 못하고 초조한 느낌이 있었나요?",
+      "삶이 의미 없다고 느낀 적이 있나요?",
+      "죽고 싶다는 생각을 한 적이 있나요?",
+      "타인과 거리를 두고 싶거나 혼자 있고 싶은 생각이 자주 드나요?",
+      "스스로의 감정 조절이 어렵다고 느낀 적이 있나요?",
+      "체중이 급격하게 증가하거나 감소했나요?",
+      "다른 사람과 비교해 자신이 무가치하다고 느낀 적이 있나요?",
+      "미래에 대해 비관적으로 느껴진 적이 있나요?",
+      "기억력이 떨어졌다고 느낀 적이 있나요?",
+      "자기관리(씻기, 식사 등)가 어렵다고 느낀 적이 있나요?",
+      "일상적인 일상도 무의미하게 느껴진 적이 있나요?",
+      "자해나 위험한 행동을 생각하거나 시도한 적이 있나요?",
+      "이러한 증상들로 인해 일상생활(직장, 학업, 인간관계 등)에 어려움을 느꼈나요?"
+    ];
+
+    let current = 0;
+    let scores = [];
+
+    function showTestSelection() {
+      document.getElementById('start-button').style.display = 'none';
+      document.getElementById('test-selection').style.display = 'flex';
+    }
+
+    function startTest() {
+      current = 0;
+      scores = [];
+      document.getElementById('test-selection').style.display = 'none';
+      document.getElementById('quiz').style.display = 'flex';
+      document.getElementById('result').style.display = 'none';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const questionNumber = document.getElementById('question-number');
+      const questionText = document.getElementById('question-text');
+      const backButton = document.getElementById('back-button');
+      
+      if (questionNumber && questionText) {
+        questionNumber.innerText = `문항 ${current + 1} / ${questions.length}`;
+        questionText.innerText = questions[current];
+        
+        if (backButton) {
+          backButton.style.display = current === 0 ? 'none' : 'inline-block';
+        }
+      }
+    }
+
+    function goBack() {
+      if (current > 0) {
+        current--;
+        scores.pop();
+        showQuestion();
+      }
+    }
+
+    function selectAnswer(score) {
+      scores.push(score);
+      current++;
+      if (current < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      const total = scores.reduce((a, b) => a + b, 0);
+      let level = '';
+      if (total >= 45) level = '심각한 우울 증상이 의심됩니다.';
+      else if (total >= 30) level = '중등도의 우울 증상이 있을 수 있습니다.';
+      else if (total >= 15) level = '가벼운 우울 증상이 있을 수 있습니다.';
+      else level = '우울 증상이 낮은 편입니다.';
+
+      document.getElementById('quiz').style.display = 'none';
+      const resultBox = document.getElementById('result');
+      if (resultBox) {
+        resultBox.style.display = 'block';
+        document.getElementById('score-text').innerText = `당신의 우울 점수는 총 ${total}점입니다.`;
+        document.getElementById('score-text').style.fontSize = '1.2rem';
+        document.getElementById('score-text').style.marginBottom = '20px';
+        document.getElementById('score-level').innerText = level;
+        document.getElementById('score-level').style.fontSize = '1.2rem';
+        document.getElementById('score-level').style.marginBottom = '50px';
+        document.getElementById('score-message').innerText = `어떤 마음으로 이곳을 찾으셨든,
+지금 이 순간, 스스로를 돌아볼 줄 아는 당신은 이미 한 걸음을 내딛고 있어요.
+세상이 조금 버겁게 느껴질 때, 잠시 멈춰 숨을 고르는 것도 괜찮습니다.
+견디고 있는 당신의 하루가 부디 무사하길 바랍니다.
+그리고 언젠가 필요하다면, 망설이지 말고 누군가의 손을 잡아주세요.
+당신은 결코 혼자가 아닙니다.`;
+      }
+    }
+  </script>
+</body>
+</html>
