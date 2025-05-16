@@ -16,7 +16,6 @@
       overflow-x: hidden;
       box-sizing: border-box;
     }
-
     .container {
       max-width: 600px;
       width: 100%;
@@ -28,19 +27,16 @@
       min-height: 100vh;
       box-sizing: border-box;
     }
-
     h1 {
       font-size: 3rem;
       margin-bottom: 20px;
       word-break: keep-all;
     }
-
     p {
       word-break: keep-all;
       line-height: 1.5;
       font-size: 1rem;
     }
-
     .btn, .test-link, .option {
       background-color: #8d7bfa;
       color: white;
@@ -56,16 +52,13 @@
       max-width: 320px;
       box-sizing: border-box;
     }
-
     .option {
       background-color: #11111a;
       border: 1px solid #8d7bfa;
     }
-
     .btn:hover, .test-link:hover, .option:hover {
       background-color: #6e5edb;
     }
-
     .question-box, .test-selection {
       display: none;
       flex-direction: column;
@@ -73,18 +66,15 @@
       margin-top: 30px;
       width: 100%;
     }
-
     .question {
       font-size: 1.2rem;
       margin-bottom: 20px;
       word-break: keep-all;
       padding: 0 10px;
     }
-
     #question-number, #question-text, #score-text, #score-level, #score-message {
       text-align: center;
     }
-
     .footer {
       margin-top: 40px;
       font-size: 0.85rem;
@@ -93,20 +83,10 @@
       text-align: center;
       padding-bottom: 20px;
     }
-
     @media screen and (max-width: 480px) {
-      h1 {
-        font-size: 2.2rem;
-      }
-
-      .btn, .option {
-        font-size: 0.95rem;
-        padding: 12px 20px;
-      }
-
-      .question {
-        font-size: 1.05rem;
-      }
+      h1 { font-size: 2.2rem; }
+      .btn, .option { font-size: 0.95rem; padding: 12px 20px; }
+      .question { font-size: 1.05rem; }
     }
   </style>
 </head>
@@ -115,15 +95,12 @@
     <p style="color: #a98dff; font-weight: 500; margin-bottom: 10px;">나를 알기 위한 첫걸음 - 간단한 자가 정신건강 검사</p>
     <h1 style="font-size: 3rem;">First step in</h1>
     <p>내 마음이 궁금할 때, 조심스레 마음을 들여다보는 시간.<br>내 안의 나를 찾아가는 여행을 떠날 준비가 되셨나요?</p>
-
     <button class="btn" id="start-button" onclick="showTestSelection()">검사하러 가기 →</button>
-
     <div id="test-selection" class="test-selection">
       <button class="btn" onclick="startTest()">우울증 검사 →</button>
-      <button class="btn" onclick="alert('준비 중입니다')">ADHD 검사 →</button>
+      <button class="btn" onclick="startAdhdTest()">ADHD 검사 →</button>
       <button class="btn" onclick="alert('준비 중입니다')">불안장애 검사 →</button>
     </div>
-
     <div id="quiz" class="question-box">
       <div id="question-number"></div>
       <div id="question-text" class="question"></div>
@@ -135,20 +112,17 @@
       </div>
       <button class="btn" id="back-button" onclick="goBack()" style="display: none;">← 이전 문항</button>
     </div>
-
     <div id="result" class="question-box">
       <h2 id="score-text" style="font-size: 3.125rem;"></h2>
       <h3 id="score-level" style="font-size: 3.125rem; margin-top: 10px;"></h3>
       <p id="score-message" style="white-space: pre-line; margin-top: 20px;"></p>
     </div>
-
     <p class="footer">
       이 사이트는 정신건강에 대한 자가 이해를 돕기 위한 목적으로 제작되었으며, 의학적 진단을 대신하지 않습니다.
     </p>
   </div>
-
   <script>
-    const questions = [
+    const depressionQuestions = [
       "최근 2주간, 기분이 가라앉거나 우울하거나 희망이 없다고 느낀 적이 있나요?",
       "예전보다 즐거움이나 흥미를 느끼는 일이 줄어들었나요?",
       "잠들기 어렵거나 너무 많이 자는 날이 많았나요?",
@@ -158,21 +132,37 @@
       "집중하기 어렵거나, 결정을 내리기 힘들었나요?",
       "움직임이 느려졌거나, 반대로 안절부절 못하고 초조한 느낌이 있었나요?",
       "삶이 의미 없다고 느낀 적이 있나요?",
-      "죽고 싶다는 생각을 한 적이 있나요?",
-      "타인과 거리를 두고 싶거나 혼자 있고 싶은 생각이 자주 드나요?",
-      "스스로의 감정 조절이 어렵다고 느낀 적이 있나요?",
-      "체중이 급격하게 증가하거나 감소했나요?",
-      "다른 사람과 비교해 자신이 무가치하다고 느낀 적이 있나요?",
-      "미래에 대해 비관적으로 느껴진 적이 있나요?",
-      "기억력이 떨어졌다고 느낀 적이 있나요?",
-      "자기관리(씻기, 식사 등)가 어렵다고 느낀 적이 있나요?",
-      "일상적인 생활이 무의미하게 느껴진 적이 있나요?",
-      "자해나 위험한 행동을 생각하거나 시도한 적이 있나요?",
-      "이러한 증상들로 인해 일상생활(직장, 학업, 인간관계 등)에 어려움을 느꼈나요?"
+      "죽고 싶다는 생각을 한 적이 있나요?"
     ];
-
+    const adhdQuestions = [
+      "일을 하면서 사소한 실수를 자주 하거나, 세부 사항에 주의를 기울이지 못한 적이 있나요?",
+      "한 가지 일에 오랜 시간 집중하기 어려운 편인가요?",
+      "다른 사람이 말할 때, 집중하지 못하거나 듣지 않은 것처럼 행동한 적이 있나요?",
+      "지시를 따르지 못하거나 과제를 끝내지 못하고 중간에 멈춘 적이 자주 있나요?",
+      "일이나 활동을 체계적으로 계획하거나 정리하는 데 어려움을 느끼나요?",
+      "해야 할 과제가 많거나 집중이 필요한 일을 미루거나 피하려고 한 적이 있나요?",
+      "휴대폰, 열쇠, 필기도구 등 필요한 물건을 자주 잃어버리나요?",
+      "외부 자극에 쉽게 주의가 산만해지나요?",
+      "일상적인 일정이나 약속을 자주 잊는 편인가요?",
+      "앉아 있어야 할 상황에서 손이나 발을 계속 움직이거나 몸을 꿈틀거린 적이 있나요?",
+      "자리에 오래 앉아 있는 것이 힘들어서 자주 일어나 움직이고 싶은 충동이 드나요?",
+      "조용히 해야 하는 상황에서도 조용히 행동하는 것이 어렵다고 느낀 적이 있나요?",
+      "마치 ‘모터가 달린 것처럼’ 계속 움직이거나 가만히 있는 것이 힘들 때가 있나요?",
+      "말을 많이 하거나 말을 멈추기 어려운 경우가 자주 있나요?",
+      "다른 사람이 말을 끝내기 전에 끼어들거나 먼저 말한 적이 자주 있나요?",
+      "줄을 서거나 차례를 기다릴 때 답답하거나 참기 어렵다고 느낀 적이 있나요?",
+      "다른 사람의 대화나 활동에 참견하거나 방해한 적이 있나요?",
+      "충동적으로 결정을 내리거나 행동해서 나중에 후회한 경험이 있나요?",
+      "감정을 조절하지 못해 욱하거나 갑작스럽게 화를 낸 적이 있나요?",
+      "위와 같은 증상들 때문에 학업, 직장, 대인관계 등에서 실질적인 어려움을 겪고 있나요?",
+      "이러한 문제들이 어린 시절에도 있었던 것 같나요?",
+      "집, 학교, 직장 등 두 곳 이상에서 위와 같은 증상이 나타나고 있나요?",
+      "위와 같은 증상들이 최근 6개월 이상 지속되고 있나요?",
+      "이러한 증상들이 단순한 스트레스나 우울감, 불안만으로는 설명되지 않는 것 같나요?"
+    ];
     let current = 0;
     let scores = [];
+    let isAdhd = false;
 
     function showTestSelection() {
       document.getElementById('start-button').style.display = 'none';
@@ -180,6 +170,17 @@
     }
 
     function startTest() {
+      isAdhd = false;
+      current = 0;
+      scores = [];
+      document.getElementById('test-selection').style.display = 'none';
+      document.getElementById('quiz').style.display = 'flex';
+      document.getElementById('result').style.display = 'none';
+      showQuestion();
+    }
+
+    function startAdhdTest() {
+      isAdhd = true;
       current = 0;
       scores = [];
       document.getElementById('test-selection').style.display = 'none';
@@ -189,14 +190,20 @@
     }
 
     function showQuestion() {
-      const questionNumber = document.getElementById('question-number');
-      const questionText = document.getElementById('question-text');
-      const backButton = document.getElementById('back-button');
+      const list = isAdhd ? adhdQuestions : depressionQuestions;
+      document.getElementById('question-number').innerText = `문항 ${current + 1} / ${list.length}`;
+      document.getElementById('question-text').innerText = list[current];
+      document.getElementById('back-button').style.display = current === 0 ? 'none' : 'inline-block';
+    }
 
-      if (questionNumber && questionText) {
-        questionNumber.innerText = `문항 ${current + 1} / ${questions.length}`;
-        questionText.innerText = questions[current];
-        backButton.style.display = current === 0 ? 'none' : 'inline-block';
+    function selectAnswer(score) {
+      scores.push(score);
+      current++;
+      const list = isAdhd ? adhdQuestions : depressionQuestions;
+      if (current < list.length) {
+        showQuestion();
+      } else {
+        showResult();
       }
     }
 
@@ -208,38 +215,31 @@
       }
     }
 
-    function selectAnswer(score) {
-      scores.push(score);
-      current++;
-      if (current < questions.length) {
-        showQuestion();
-      } else {
-        showResult();
-      }
-    }
-
     function showResult() {
       const total = scores.reduce((a, b) => a + b, 0);
       let level = '';
-      if (total >= 45) level = '심각한 우울 증상이 의심됩니다.';
-      else if (total >= 30) level = '중등도의 우울 증상이 있을 수 있습니다.';
-      else if (total >= 15) level = '가벼운 우울 증상이 있을 수 있습니다.';
-      else level = '우울 증상이 낮은 편입니다.';
+      let message = '';
+
+      if (isAdhd) {
+        if (total >= 60) level = 'ADHD 가능성이 매우 높습니다.';
+        else if (total >= 45) level = 'ADHD 가능성이 있습니다.';
+        else if (total >= 30) level = '주의집중에 다소 어려움이 있을 수 있습니다.';
+        else level = 'ADHD 가능성은 낮은 편입니다.';
+        message = `본 검사는 자가검사이며,\n정확한 진단을 위해서는 정신건강의학과 전문의의 진료가 필요합니다.\n증상이 지속되거나 일상에 영향을 미친다면 꼭 전문가의 도움을 받아보세요.`;
+        document.getElementById('score-text').innerText = `당신의 ADHD 점수는 총 ${total}점입니다.`;
+      } else {
+        if (total >= 45) level = '심각한 우울 증상이 의심됩니다.';
+        else if (total >= 30) level = '중등도의 우울 증상이 있을 수 있습니다.';
+        else if (total >= 15) level = '가벼운 우울 증상이 있을 수 있습니다.';
+        else level = '우울 증상이 낮은 편입니다.';
+        message = `어떤 마음으로 이곳을 찾으셨든,\n지금 이 순간, 스스로를 돌아볼 줄 아는 당신은 이미 한 걸음을 내딛고 있어요.\n세상이 조금 버겁게 느껴질 때, 잠시 멈춰 숨을 고르는 것도 괜찮습니다.\n견디고 있는 당신의 하루가 부디 무사하길 바랍니다.\n그리고 언젠가 필요하다면, 망설이지 말고 누군가의 손을 잡아주세요.\n당신은 결코 혼자가 아닙니다.`;
+        document.getElementById('score-text').innerText = `당신의 우울 점수는 총 ${total}점입니다.`;
+      }
 
       document.getElementById('quiz').style.display = 'none';
       document.getElementById('result').style.display = 'block';
-      document.getElementById('score-text').innerText = `당신의 우울 점수는 총 ${total}점입니다.`;
-      document.getElementById('score-text').style.fontSize = '1.2rem';
-      document.getElementById('score-text').style.marginBottom = '20px';
       document.getElementById('score-level').innerText = level;
-      document.getElementById('score-level').style.fontSize = '1.2rem';
-      document.getElementById('score-level').style.marginBottom = '50px';
-      document.getElementById('score-message').innerText = `어떤 마음으로 이곳을 찾으셨든,
-지금 이 순간, 스스로를 돌아볼 줄 아는 당신은 이미 한 걸음을 내딛고 있어요.
-세상이 조금 버겁게 느껴질 때, 잠시 멈춰 숨을 고르는 것도 괜찮습니다.
-견디고 있는 당신의 하루가 부디 무사하길 바랍니다.
-그리고 언젠가 필요하다면, 망설이지 말고 누군가의 손을 잡아주세요.
-당신은 결코 혼자가 아닙니다.`;
+      document.getElementById('score-message').innerText = message;
     }
   </script>
 </body>
