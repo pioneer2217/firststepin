@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>First Step In</title>
   <style>
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       background-color: #11111a;
       font-family: 'Pretendard', sans-serif;
       color: white;
       text-align: center;
+      width: 100%;
+      overflow-x: hidden;
+      box-sizing: border-box;
     }
 
     .container {
       max-width: 600px;
+      width: 100%;
       margin: 0 auto;
       padding: 40px 20px;
       display: flex;
@@ -23,76 +27,95 @@
       align-items: center;
       position: relative;
       min-height: 100vh;
+      box-sizing: border-box;
     }
 
     h1 {
-      font-size: 3.125rem;
+      font-size: 3rem;
       margin-bottom: 20px;
+      word-break: keep-all;
     }
 
-    .btn, .test-link {
+    p {
+      word-break: keep-all;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    .btn, .test-link, .option {
       background-color: #8d7bfa;
       color: white;
-      padding: 12px 24px;
+      padding: 14px 24px;
       border: none;
       border-radius: 30px;
       font-size: 1rem;
       cursor: pointer;
-      margin: 10px;
+      margin: 10px auto;
       text-decoration: none;
       transition: background-color 0.3s;
+      width: 90%;
+      max-width: 320px;
+      box-sizing: border-box;
     }
 
     .option {
       background-color: #11111a;
-      color: white;
-      padding: 12px 24px;
       border: 1px solid #8d7bfa;
-      border-radius: 30px;
-      font-size: 1rem;
-      cursor: pointer;
-      margin: 10px;
-      text-decoration: none;
-      transition: background-color 0.3s;
     }
 
     .btn:hover, .test-link:hover, .option:hover {
       background-color: #6e5edb;
     }
 
-    .question-box {
+    .question-box, .test-selection {
       display: none;
       flex-direction: column;
       align-items: center;
       margin-top: 30px;
-    }
-
-    .test-selection {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 30px;
+      width: 100%;
     }
 
     .question {
       font-size: 1.2rem;
       margin-bottom: 20px;
+      word-break: keep-all;
+      padding: 0 10px;
+    }
+
+    #question-number, #question-text, #score-text, #score-level, #score-message {
+      text-align: center;
     }
 
     .footer {
       margin-top: 40px;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #888;
       position: absolute;
       bottom: 20px;
       width: 100%;
+      text-align: center;
+    }
+
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      .btn, .option {
+        font-size: 0.95rem;
+        padding: 12px 20px;
+      }
+
+      .question {
+        font-size: 1.05rem;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <p style="color: #a98dff; font-weight: 500; margin-bottom: 10px;">나를 알기 위한 첫걸음 - 간단한 자가 정신건강 검사</p>
-    <h1 style="font-size: 3.025rem;">First step in</h1>
+    <h1 style="font-size: 3rem;">First step in</h1>
     <p>내 마음이 궁금할 때, 조심스레 마음을 들여다보는 시간.<br>내 안의 나를 찾아가는 여행을 떠날 준비가 되셨나요?</p>
 
     <button class="btn" id="start-button" onclick="showTestSelection()">검사하러 가기 →</button>
@@ -121,7 +144,7 @@
       <p id="score-message" style="white-space: pre-line; margin-top: 20px;"></p>
     </div>
 
-    <p class="footer" style="white-space: nowrap;">이 사이트는 정신건강에 대한 자가 이해를 돕기 위한 목적으로 제작되었으며, 의학적 진단을 대신하지 않습니다.</p>
+    <p class="footer">이 사이트는 정신건강에 대한 자가 이해를 돕기 위한 목적으로 제작되었으며, 의학적 진단을 대신하지 않습니다.</p>
   </div>
 
   <script>
@@ -169,14 +192,11 @@
       const questionNumber = document.getElementById('question-number');
       const questionText = document.getElementById('question-text');
       const backButton = document.getElementById('back-button');
-      
+
       if (questionNumber && questionText) {
         questionNumber.innerText = `문항 ${current + 1} / ${questions.length}`;
         questionText.innerText = questions[current];
-        
-        if (backButton) {
-          backButton.style.display = current === 0 ? 'none' : 'inline-block';
-        }
+        backButton.style.display = current === 0 ? 'none' : 'inline-block';
       }
     }
 
@@ -207,22 +227,19 @@
       else level = '우울 증상이 낮은 편입니다.';
 
       document.getElementById('quiz').style.display = 'none';
-      const resultBox = document.getElementById('result');
-      if (resultBox) {
-        resultBox.style.display = 'block';
-        document.getElementById('score-text').innerText = `당신의 우울 점수는 총 ${total}점입니다.`;
-        document.getElementById('score-text').style.fontSize = '1.2rem';
-        document.getElementById('score-text').style.marginBottom = '20px';
-        document.getElementById('score-level').innerText = level;
-        document.getElementById('score-level').style.fontSize = '1.2rem';
-        document.getElementById('score-level').style.marginBottom = '50px';
-        document.getElementById('score-message').innerText = `어떤 마음으로 이곳을 찾으셨든,
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('score-text').innerText = `당신의 우울 점수는 총 ${total}점입니다.`;
+      document.getElementById('score-text').style.fontSize = '1.2rem';
+      document.getElementById('score-text').style.marginBottom = '20px';
+      document.getElementById('score-level').innerText = level;
+      document.getElementById('score-level').style.fontSize = '1.2rem';
+      document.getElementById('score-level').style.marginBottom = '50px';
+      document.getElementById('score-message').innerText = `어떤 마음으로 이곳을 찾으셨든,
 지금 이 순간, 스스로를 돌아볼 줄 아는 당신은 이미 한 걸음을 내딛고 있어요.
 세상이 조금 버겁게 느껴질 때, 잠시 멈춰 숨을 고르는 것도 괜찮습니다.
 견디고 있는 당신의 하루가 부디 무사하길 바랍니다.
 그리고 언젠가 필요하다면, 망설이지 말고 누군가의 손을 잡아주세요.
 당신은 결코 혼자가 아닙니다.`;
-      }
     }
   </script>
 </body>
