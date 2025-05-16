@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADHD 인지 기능 검사</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #11111a;
+      font-family: 'Pretendard', 'Arial', sans-serif;
+      color: white;
+      text-align: center;
+      width: 100%;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      word-break: keep-all;
+    }
+    p {
+      word-break: keep-all;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+    .btn {
+      background-color: #8d7bfa;
+      color: white;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px auto;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      width: 90%;
+      max-width: 320px;
+      box-sizing: border-box;
+    }
+    .btn:hover {
+      background-color: #6e5edb;
+    }
+    .test-section {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-top: 30px;
+    }
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      word-break: keep-all;
+      padding: 0 10px;
+    }
+    input[type="number"] {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #8d7bfa;
+      background-color: #1a1a2e;
+      color: white;
+      margin-bottom: 15px;
+      text-align: center;
+      width: 60%;
+      max-width: 200px;
+    }
+    .result {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 30px;
+      width: 100%;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #888;
+      width: 100%;
+      text-align: center;
+      padding-bottom: 20px;
+    }
+    #timer {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      font-size: 0.85rem;
+      color: #888;
+    }
+    #start {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .info-text {
+      padding: 0 15px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+    .option-btn {
+      background-color: #11111a;
+      border: 1px solid #8d7bfa;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px auto;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      width: 90%;
+      max-width: 320px;
+      box-sizing: border-box;
+    }
+    .option-btn:hover {
+      background-color: #6e5edb;
+    }
+    @media screen and (max-width: 480px) {
+      h1 { font-size: 2.2rem; }
+      .btn, .option-btn { font-size: 0.95rem; padding: 12px 20px; }
+      .question { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="timer">소요 시간: <span id="elapsedTime">0</span>초</div>
+  <div class="container">
+    <p style="color: #a98dff; font-weight: 500; margin-bottom: 10px;">나를 알기 위한 첫걸음 - 인지 기능 검사</p>
+    <h1>ADHD 인지 기능 검사</h1>
+    
+    <div id="start">
+      <p class="info-text">
+        본 검사는 ADHD 경향을 파악하기 위해 <strong>주의력, 반응 속도, 충동 억제력, 작업 기억력</strong>을 측정하는 자가검사입니다.<br>
+        총 3단계(수학 반응속도, Go/No-Go, 작업 기억 N-Back)로 구성되며, 약 <strong>5~10분</strong> 정도 소요됩니다.<br>
+        정식 진단이 아닌 <strong>자가 평가 도구</strong>이므로 결과는 참고용으로만 활용해 주세요.
+      </p>
+      <button class="btn" onclick="startTest()">검사 시작하기 →</button>
+    </div>
+
+    <!-- 수학 반응 속도 검사 -->
+    <div class="test-section" id="mathTest">
+      <p class="info-text"><strong>수학 반응 속도 검사 안내:</strong><br>
+        제한 시간 내에 덧셈, 뺄셈, 곱셈, 나눗셈 문제를 풀어야 합니다.<br>
+        문제는 점점 난이도가 높아지며, 반응 속도와 정확도를 모두 측정합니다.
+      </p>
+      <div class="question" id="mathQuestion"></div>
+      <input type="number" id="mathAnswer" placeholder="정답 입력" />
+      <button class="btn" onclick="submitMathAnswer()">제출</button>
+    </div>
+
+    <!-- Go/No-Go Test -->
+    <div class="test-section" id="goNoGoTest">
+      <p class="info-text"><strong>Go/No-Go 검사 안내:</strong><br>
+        화면에 <strong>O</strong>가 나타나면 <strong>클릭</strong>, <strong>X</strong>가 나타나면 <strong>아무 것도 하지 마세요</strong>.<br>
+        충동 억제력을 평가합니다.
+      </p>
+      <div class="question" id="goNoGoQuestion"></div>
+      <button class="btn" onclick="submitGoNoGo(true)">클릭</button>
+    </div>
+
+    <!-- N-Back Test -->
+    <div class="test-section" id="nBackTest">
+      <p class="info-text"><strong>N-Back 작업 기억 검사 안내:</strong><br>
+        먼저 글자가 하나씩 제시된 후,<br>
+        제시된 글자가 두 단계 전 글자와 같은지 <strong>'같다'</strong> 또는 <strong>'다르다'</strong>를 선택해 주세요.
+      </p>
+      <div class="question" id="nBackQuestion"></div>
+      <div style="display: flex; flex-direction: row; justify-content: center; width: 100%;">
+        <button class="option-btn" id="nBackSameBtn" onclick="submitNBack(true)" style="display:none; margin: 10px;">같다</button>
+        <button class="option-btn" id="nBackDiffBtn" onclick="submitNBack(false)" style="display:none; margin: 10px;">다르다</button>
+      </div>
+    </div>
+
+    <!-- 결과 -->
+    <div class="result" id="result">
+      <h2 id="resultScore" style="font-size: 2.2rem; margin-bottom: 10px;"></h2>
+      <h3 id="resultLevel" style="font-size: 1.8rem; margin-top: 0;"></h3>
+      <p id="resultSummary" class="info-text" style="white-space: pre-line;"></p>
+      <button class="btn" onclick="location.reload()">처음으로 돌아가기</button>
+    </div>
+
+    <p class="footer">
+      이 검사는 정신건강에 대한 자가 이해를 돕기 위한 목적으로 제작되었으며, 의학적 진단을 대신하지 않습니다.
+    </p>
+  </div>
+
+  <script>
+    let currentStep = 0;
+    let mathProblems = [];
+    let mathIndex = 0;
+    let mathStartTime, goNoGoIndex = 0, nBackIndex = 0;
+    let mathScore = 0, goNoGoScore = 0, nBackScore = 0;
+    let goNoGoSequence = [true, false, true, false, true, true, false, false, true, true];
+    let nBackSequence = ['A', 'B', 'A', 'C', 'A', 'D', 'B', 'A', 'B', 'D'];
+    let nBackHistory = [];
+    let startTime;
+    let goNoGoTimeout, nBackTimeout;
+
+    function generateMathProblems() {
+      mathProblems = [];
+      for (let i = 0; i < 8; i++) {
+        let a = Math.floor(Math.random() * 90) + 10;
+        let b = Math.floor(Math.random() * 9) + 1;
+        let type = ["+", "-", "×", "÷"][Math.floor(Math.random() * 4)];
+        let question = `${a} ${type} ${b} = ?`;
+        let answer;
+        switch (type) {
+          case "+": answer = a + b; break;
+          case "-": answer = a - b; break;
+          case "×": answer = a * b; break;
+          case "÷": answer = Math.floor(a / b); break;
+        }
+        mathProblems.push({ q: question, a: answer });
+      }
+    }
+
+    function startTest() {
+      startTime = Date.now();
+      updateElapsedTime();
+      document.getElementById("start").style.display = "none";
+      nextStep();
+    }
+
+    function updateElapsedTime() {
+      let now = Date.now();
+      let seconds = Math.floor((now - startTime) / 1000);
+      document.getElementById("elapsedTime").textContent = seconds;
+      setTimeout(updateElapsedTime, 1000);
+    }
+
+    function nextStep() {
+      const sections = ["mathTest", "goNoGoTest", "nBackTest"];
+      if (currentStep > 0) document.getElementById(sections[currentStep - 1]).style.display = "none";
+      if (currentStep < sections.length) {
+        document.getElementById(sections[currentStep]).style.display = "flex";
+        if (currentStep === 0) startMathTest();
+        else if (currentStep === 1) startGoNoGoTest();
+        else if (currentStep === 2) startNBackTest();
+        currentStep++;
+      } else {
+        showResult();
+      }
+    }
+
+    function startMathTest() {
+      generateMathProblems();
+      mathIndex = 0;
+      mathScore = 0;
+      showMathQuestion();
+    }
+
+    function showMathQuestion() {
+      if (mathIndex < mathProblems.length) {
+        const prob = mathProblems[mathIndex];
+        document.getElementById("mathQuestion").textContent = prob.q;
+        document.getElementById("mathAnswer").value = "";
+        mathStartTime = Date.now();
+      } else {
+        nextStep();
+      }
+    }
+
+    function submitMathAnswer() {
+      const userAns = parseInt(document.getElementById("mathAnswer").value);
+      const correctAns = mathProblems[mathIndex].a;
+      const responseTime = Date.now() - mathStartTime;
+      if (userAns === correctAns && responseTime < 6000) mathScore++;
+      mathIndex++;
+      showMathQuestion();
+    }
+
+    function startGoNoGoTest() {
+      goNoGoIndex = 0;
+      goNoGoScore = 0;
+      setTimeout(showGoNoGoStimulus, 1000);
+    }
+
+    function showGoNoGoStimulus() {
+      if (goNoGoIndex >= goNoGoSequence.length) {
+        nextStep();
+        return;
+      }
+      const isTarget = goNoGoSequence[goNoGoIndex];
+      document.getElementById("goNoGoQuestion").textContent = isTarget ? "O" : "X";
+
+      let delay;
+      if (!isTarget) {
+        // X인 경우만 자동 패스 시간 설정
+        if (goNoGoIndex === 1) {
+          delay = 4500;
+        } else if (goNoGoIndex === 3) {
+          delay = 8000;
+        } else {
+          delay = 1000;
+        }
+      } else {
+        delay = 1000;
+      }
+
+      goNoGoTimeout = setTimeout(() => {
+        if (!isTarget) goNoGoScore++;
+        goNoGoIndex++;
+        showGoNoGoStimulus();
+      }, delay);
+    }
+
+    function submitGoNoGo(clicked) {
+      clearTimeout(goNoGoTimeout);
+      const isTarget = goNoGoSequence[goNoGoIndex];
+      if ((isTarget && clicked) || (!isTarget && !clicked)) goNoGoScore++;
+      goNoGoIndex++;
+      setTimeout(showGoNoGoStimulus, 500);
+    }
+
+    function startNBackTest() {
+      nBackIndex = 0;
+      nBackScore = 0;
+      nBackHistory = [];
+      showNBackStimulus();
+    }
+
+    function showNBackStimulus() {
+      if (nBackIndex >= nBackSequence.length) {
+        nextStep();
+        return;
+      }
+      const stim = nBackSequence[nBackIndex];
+      document.getElementById("nBackQuestion").textContent = stim;
+      nBackHistory.push(stim);
+
+      // 첫 두 문자는 버튼 비활성화 (판단할 수 없음)
+      if (nBackIndex < 2) {
+        document.getElementById("nBackSameBtn").style.display = "none";
+        document.getElementById("nBackDiffBtn").style.display = "none";
+        nBackIndex++;
+        setTimeout(showNBackStimulus, 800);
+      } else {
+        document.getElementById("nBackSameBtn").style.display = "inline-block";
+        document.getElementById("nBackDiffBtn").style.display = "inline-block";
+        
+        // 1~15초 사이의 랜덤 시간 제한 설정
+        const timeLimit = Math.floor(Math.random() * 14000) + 1000; // 1000~15000ms
+        
+        // 시간 제한 내에 응답하지 않으면 자동으로 오답 처리 후 다음 문항으로
+        nBackTimeout = setTimeout(() => {
+          document.getElementById("nBackQuestion").textContent = "시간 초과!";
+          document.getElementById("nBackSameBtn").style.display = "none";
+          document.getElementById("nBackDiffBtn").style.display = "none";
+          nBackIndex++;
+          setTimeout(showNBackStimulus, 1000);
+        }, timeLimit);
+      }
+    }
+
+    function submitNBack(isSame) {
+      clearTimeout(nBackTimeout); // 타이머 제거
+      const current = nBackSequence[nBackIndex];
+      const prev = nBackHistory[nBackIndex - 2];
+      const correct = (current === prev);
+      if (isSame === correct) nBackScore++;
+      nBackIndex++;
+      document.getElementById("nBackSameBtn").style.display = "none";
+      document.getElementById("nBackDiffBtn").style.display = "none";
+      setTimeout(showNBackStimulus, 500);
+    }
+
+    function showResult() {
+      document.getElementById("nBackTest").style.display = "none";
+      document.getElementById("result").style.display = "flex";
+      
+      const totalScore = mathScore + goNoGoScore + nBackScore;
+      const maxScore = mathProblems.length + goNoGoSequence.length + (nBackSequence.length - 2);
+      const scorePercentage = Math.floor((totalScore / maxScore) * 100);
+      
+      let resultText = '';
+      let resultLevel = '';
+      
+      if (mathScore <= 4 || goNoGoScore <= 5 || nBackScore <= 4) {
+        resultLevel = "ADHD 가능성이 있습니다";
+        resultText = "⚠️ 주의력, 충동억제력 또는 작업기억 항목 중 일부에서 낮은 점수가 확인되었습니다.\n\nADHD 가능성이 있을 수 있으니 전문 진료를 권장합니다.\n\n본 검사는 자가검사이며, 정확한 진단을 위해서는 정신건강의학과 전문의의 진료가 필요합니다.\n\n증상이 지속되거나 일상에 영향을 미친다면 꼭 전문가의 도움을 받아보세요.";
+      } else {
+        resultLevel = "정상 범위입니다";
+        resultText = "✅ 전반적으로 주의력과 인지기능이 안정적인 편입니다.\n\n그러나 증상이 지속된다면 전문의 상담을 받아보세요.\n\n본 검사는 자가검사이며, 정확한 진단을 위해서는 정신건강의학과 전문의의 진료가 필요합니다.";
+      }
+      
+      document.getElementById("resultScore").textContent = `검사 점수: ${totalScore}점 (${scorePercentage}%)`;
+      document.getElementById("resultLevel").textContent = resultLevel;
+      document.getElementById("resultSummary").innerHTML = `<strong>세부 결과:</strong> 수학정확도: ${mathScore}/${mathProblems.length}, 반응조절: ${goNoGoScore}/${goNoGoSequence.length}, 작업기억: ${nBackScore}/${nBackSequence.length - 2}\n\n${resultText}`;
+    }
+  </script>
+</body>
+</html>
